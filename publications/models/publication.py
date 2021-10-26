@@ -7,11 +7,14 @@ __docformat__ = 'epytext'
 import os
 
 from django.db import models
+from django.db.models.deletion import SET_NULL
 from django.utils.http import urlquote_plus
 from django.conf import settings
 from publications.fields import PagesField
 from publications.models import Type, List
 from string import ascii_uppercase
+
+from publisher.models import Publisher
 
 if 'django.contrib.sites' in settings.INSTALLED_APPS:
 	from django.contrib.sites.models import Site
@@ -68,7 +71,8 @@ class Publication(models.Model):
 	month = models.IntegerField(choices=MONTH_CHOICES, blank=True, null=True)
 	journal = models.CharField(max_length=256, blank=True)
 	book_title = models.CharField(max_length=256, blank=True)
-	publisher = models.CharField(max_length=256, blank=True)
+	#publisher = models.CharField(max_length=256, blank=True)
+	publisher = models.ForeignKey(Publisher, blank=True, null=True, on_delete=SET_NULL)
 	institution = models.CharField(max_length=256, blank=True)
 	volume = models.IntegerField(blank=True, null=True)
 	number = models.IntegerField(blank=True, null=True, verbose_name='Issue number')
@@ -313,7 +317,8 @@ class Publication(models.Model):
 			contextObj.append('rft.btitle=' + urlquote_plus(self.title))
 
 			if self.publisher:
-				contextObj.append('rft.pub=' + urlquote_plus(self.publisher))
+				contextObj.append('rft.pub=' + str(self.publisher.short_name)
+				)
 
 		else:
 			contextObj.append('rft_val_fmt=info:ofi/fmt:kev:mtx:journal')
