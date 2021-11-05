@@ -1,5 +1,7 @@
 import re
 
+from django.utils.translation import gettext as _
+
 import publications.six as six
 from publications.models import CustomLink, CustomFile, Publication, Type
 from publisher.models import Publisher
@@ -136,7 +138,7 @@ def populate_from_bib(bib):
 						abstract=entry['abstract'],
 						keywords=entry['keywords']))
 				else:
-					errors['bibliography'] = 'Make sure that the keys title, author and year are present.'
+					errors['bibliography'] = _('Make sure that the keys title, author and year are present.')
 					break
 	return publications, errors
 
